@@ -10,6 +10,8 @@ var bookmarksRouter = require('./routes/bookmarks');
 
 var usersRouter = require('./routes/users');
 
+var debug = require('debug')('moviesApp:server');
+
 var app = express();
 
 var bodyParser  = require("body-parser");   //nuevo
@@ -22,9 +24,18 @@ var mongoose = require('mongoose');
 
 require('dotenv').config();
 
-mongoose.connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() =>  console.log('mymerndb connection successful'))
-    .catch((err) => console.error(err));
+const MONGODB_CLUSTER_URI = process.env.MONGODB_CLUSTER_URI;
+
+// Añade el nombre de tu base de datos al final de la URI
+const MONGODB_DATABASE_NAME = process.env.MONGODB_DATABASE_NAME;
+const fullURI = `${MONGODB_CLUSTER_URI}/${MONGODB_DATABASE_NAME}?retryWrites=true&w=majority&appName=ClusterSSIIUU`;
+
+// MongoDB Atlas DB cluster connection
+mongoose
+  .connect(fullURI,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => debug("MongoDB Atlas DataBase connection successful"));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
