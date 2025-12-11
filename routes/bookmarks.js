@@ -19,26 +19,9 @@ router.get('/:email', function (req, res) {
       });
   });
 
-    /* POST a new bookmark*/
-router.post('/', function (req, res) {
-    Bookmark.find({ 'email': req.body.email, 'movie': req.body.movie }, function (err, bookmarks) {
-        if (err) res.status(500).send(err);
-        else {
-            if (bookmarks.length > 0) {
-                res.status(409).send("Bookmark already exists");
-            } else {
-                Bookmark.create(req.body, function (err, bookmarkinfo) {
-                    if (err) res.status(500).send(err);
-                    else res.sendStatus(200);
-                });
-            }
-        }
-    });
-});
-
 // Ejemplo: Ruta protegida para añadir un bookmark
 // El middleware se ejecuta antes que la función del controlador
-router.post('/bookmarks', verifyGoogleToken, async (req, res) => {
+router.post('/', verifyGoogleToken, async (req, res) => {
     try {
         // Aquí ya tienes acceso a req.user gracias al middleware
         Bookmark.find({ 'email': req.body.email, 'movie': req.body.movie }, function (err, bookmarks) {
